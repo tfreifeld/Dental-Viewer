@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "noImplicitOverride": true,
+    "rootDir": "src",
+    "outDir": "build",
+    "esModuleInterop": true,
+  }
+}

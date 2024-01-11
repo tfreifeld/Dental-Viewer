@@ -1,0 +1,25 @@
+{
+  "name": "clevaligner_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "./node_modules/.bin/tsc",
+    "dev": "http-server -c-1",
+    "start": "http-server -c-1 -o"
+  },
+  "dependencies": {
+    "three": "^0.160.0",
+    "lil-gui": "^0.19.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.160.0",
+    "eslint": "^8.56.0",
+    "prettier": "3.0.3",
+    "typescript": "^5.3.3",
+    "http-server": "^14.1.1"
+  },
+  "private": true,
+  "license": "MIT"
+}
