@@ -9,7 +9,8 @@
                 "lil-gui": "./node_modules/lil-gui/dist/lil-gui.esm.js",
                 "three": "./node_modules/three/build/three.module.js",
                 "three/examples/jsm/loaders/GLTFLoader": "./node_modules/three/examples/jsm/loaders/GLTFLoader.js",
-                "three/examples/jsm/controls/OrbitControls": "./node_modules/three/examples/jsm/controls/OrbitControls.js"
+                "three/examples/jsm/controls/OrbitControls": "./node_modules/three/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/controls/TransformControls": "./node_modules/three/examples/jsm/controls/TransformControls.js"
             }
         }
     </script>
@@ -44,14 +45,32 @@
         .center-button:hover {
             background-color: #2980b9;
         }
+
+        label {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            z-index: 1;
+            display: none;
+        }
+
+        .constant-controller {
+            opacity: 1.0 !important;
+        }
+
     </style>
 
 </head>
 <body>
-    <button class="center-button" id="load-button">Load</button>
-    <script type="module">
-        import { AppManager } from './build/AppManager.js';
-        new AppManager();
-    </script>
+<label for="orbit-controls-toggle">
+    Orbit Controls
+    <input type="checkbox" id="orbit-controls-toggle" checked>
+</label>
+<button class="center-button" id="load-button">Load</button>
+<script type="module">
+    import {AppManager} from './build/AppManager.js';
+
+    window["app"] = new AppManager();
+</script>
 </body>
 </html>

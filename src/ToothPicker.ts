@@ -1,21 +1,33 @@
-import {BufferGeometry, type Intersection, Mesh, MeshStandardMaterial, Raycaster, Vector2} from "three";
+import {BufferGeometry, type Intersection, Mesh, MeshStandardMaterial, Raycaster, Vector2, Vector3} from "three";
 import {AppManager} from "./AppManager.js";
+import {SceneController} from "./SceneController.js";
 
 export class ToothPicker {
 
+
+    private mIsActive: boolean;
 
     private readonly mRaycaster: Raycaster;
     private readonly mPointerCoords: Vector2;
 
     private mPickedTooth: Mesh<BufferGeometry, MeshStandardMaterial> | null;
 
+    private mIntersection: Intersection;
+
     constructor() {
 
+        this.mIsActive = true;
         this.mPickedTooth = null;
         this.mRaycaster = new Raycaster();
         this.mPointerCoords = new Vector2();
         window.addEventListener("pointermove", (event: PointerEvent) => this.onPointerMove(event));
         window.addEventListener("click", () => this.onPointerClick());
+
+        // Listen for the assets to be loaded
+        window.addEventListener(SceneController.ASSETS_LOADED, () => {
+            // Only then we should start listening for the render event for picking
+            window.addEventListener(SceneController.RENDER, () => this.onRender());
+        });
 
     }
 
@@ -39,8 +51,12 @@ export class ToothPicker {
      * @private
      */
     private onPointerClick(): void {
+
+        if (!this.mIsActive) {
+            return;
+        }
         if (this.mPickedTooth != null) {
-            AppManager.instance.teethManager.onToothClicked(this.mPickedTooth);
+            AppManager.instance.teethManager.onToothSelected(this.mPickedTooth);
         }
     }
 
@@ -48,12 +64,20 @@ export class ToothPicker {
      * Try to pick a tooth on each frame
      */
     onRender(): void {
+
+        if (!this.mIsActive) {
+            return;
+        }
+
         // Update the picking ray with the camera and pointer position
         this.mRaycaster.setFromCamera(this.mPointerCoords, AppManager.instance.sceneController.camera);
 
-        const intersection: Intersection = this.mRaycaster.intersectObject(AppManager.instance.sceneController.scene, true)?.[0];
+        const intersection: Intersection = this.mRaycaster.intersectObject(AppManager.instance.teethManager.models, true)?.[0];
 
         if (intersection != null) {
+
+            this.mIntersection = intersection;
+
             // If the user is already hovering over the picked tooth, do nothing
             if (this.mPickedTooth === intersection.object) {
                 return;
@@ -77,5 +101,13 @@ export class ToothPicker {
 
             this.mPickedTooth = null;
         }
+    }
+
+    activate(): void {
+        this.mIsActive = true;
+    }
+
+    deactivate(): void {
+        this.mIsActive = false;
     }
 }

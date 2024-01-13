@@ -4,7 +4,6 @@ import { TeethManager } from "./TeethManager.js";
 import { GUIManager } from "./GUIManager.js";
 export class AppManager {
     static instance;
-    mLoadButton;
     mSceneController;
     mToothPicker;
     mTeethManager;
@@ -15,12 +14,6 @@ export class AppManager {
         this.mSceneController = new SceneController();
         this.mToothPicker = new ToothPicker();
         this.mTeethManager = new TeethManager();
-        this.mLoadButton = document.getElementById("load-button");
-        this.mLoadButton.addEventListener("click", () => this.onLoadButtonClick());
-    }
-    onLoadButtonClick() {
-        this.mSceneController.loadAssets().then(() => this.mSceneController.setUpControls());
-        this.mLoadButton.remove();
     }
     get sceneController() {
         return this.mSceneController;

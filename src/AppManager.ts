@@ -7,7 +7,6 @@ export class AppManager {
 
     public static instance: AppManager;
 
-    private readonly mLoadButton: HTMLButtonElement;
     private readonly mSceneController: SceneController;
     private readonly mToothPicker: ToothPicker;
     private readonly mTeethManager: TeethManager;
@@ -21,14 +20,6 @@ export class AppManager {
         this.mSceneController = new SceneController();
         this.mToothPicker = new ToothPicker();
         this.mTeethManager = new TeethManager();
-
-        this.mLoadButton = document.getElementById("load-button") as HTMLButtonElement;
-        this.mLoadButton.addEventListener("click", () => this.onLoadButtonClick());
-    }
-
-    private onLoadButtonClick(): void {
-        this.mSceneController.loadAssets().then(() => this.mSceneController.setUpControls());
-        this.mLoadButton.remove();
 
     }
 

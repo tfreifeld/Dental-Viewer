@@ -1,15 +1,24 @@
-import { BufferGeometry, Mesh, MeshStandardMaterial, Raycaster, Vector2 } from "three";
+import { BufferGeometry, Mesh, MeshStandardMaterial, Raycaster, Vector2, Vector3 } from "three";
 import { AppManager } from "./AppManager.js";
+import { SceneController } from "./SceneController.js";
 export class ToothPicker {
+    mIsActive;
     mRaycaster;
     mPointerCoords;
     mPickedTooth;
+    mIntersection;
     constructor() {
+        this.mIsActive = true;
         this.mPickedTooth = null;
         this.mRaycaster = new Raycaster();
         this.mPointerCoords = new Vector2();
         window.addEventListener("pointermove", (event) => this.onPointerMove(event));
         window.addEventListener("click", () => this.onPointerClick());
+        // Listen for the assets to be loaded
+        window.addEventListener(SceneController.ASSETS_LOADED, () => {
+            // Only then we should start listening for the render event for picking
+            window.addEventListener(SceneController.RENDER, () => this.onRender());
+        });
     }
     /**
      * Update the pointer coordinates
@@ -26,18 +35,25 @@ export class ToothPicker {
      * @private
      */
     onPointerClick() {
+        if (!this.mIsActive) {
+            return;
+        }
         if (this.mPickedTooth != null) {
-            AppManager.instance.teethManager.onToothClicked(this.mPickedTooth);
+            AppManager.instance.teethManager.onToothSelected(this.mPickedTooth);
         }
     }
     /**
      * Try to pick a tooth on each frame
      */
     onRender() {
+        if (!this.mIsActive) {
+            return;
+        }
         // Update the picking ray with the camera and pointer position
         this.mRaycaster.setFromCamera(this.mPointerCoords, AppManager.instance.sceneController.camera);
-        const intersection = this.mRaycaster.intersectObject(AppManager.instance.sceneController.scene, true)?.[0];
+        const intersection = this.mRaycaster.intersectObject(AppManager.instance.teethManager.models, true)?.[0];
         if (intersection != null) {
+            this.mIntersection = intersection;
             // If the user is already hovering over the picked tooth, do nothing
             if (this.mPickedTooth === intersection.object) {
                 return;
@@ -57,6 +73,12 @@ export class ToothPicker {
             }
             this.mPickedTooth = null;
         }
+    }
+    activate() {
+        this.mIsActive = true;
+    }
+    deactivate() {
+        this.mIsActive = false;
     }
 }
 //# sourceMappingURL=ToothPicker.js.map
