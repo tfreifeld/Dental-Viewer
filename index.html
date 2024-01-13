@@ -3,18 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Clevaligner Test</title>
-    <script type="importmap">
-        {
-            "imports": {
-                "lil-gui": "./node_modules/lil-gui/dist/lil-gui.esm.js",
-                "three": "./node_modules/three/build/three.module.js",
-                "three/examples/jsm/loaders/GLTFLoader": "./node_modules/three/examples/jsm/loaders/GLTFLoader.js",
-                "three/examples/jsm/controls/OrbitControls": "./node_modules/three/examples/jsm/controls/OrbitControls.js",
-                "three/examples/jsm/controls/TransformControls": "./node_modules/three/examples/jsm/controls/TransformControls.js",
-                "three-mesh-bvh": "./node_modules/three-mesh-bvh/build/index.module.js"
-            }
-        }
-    </script>
     <script src="dist/bundle.js" type="module"></script>
     <style>
         body {
@@ -67,7 +55,7 @@
 </label>
 <button class="center-button" id="load-button">Load</button>
 <script type="module">
-    import {AppManager} from './js/AppManager.js';
+    import {AppManager} from './dist/bundle.js';
 
     new AppManager();
 </script>
