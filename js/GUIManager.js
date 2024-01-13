@@ -1,5 +1,4 @@
 import GUI, { Controller } from "lil-gui";
-import { AppManager } from "./AppManager.js";
 import { TeethManager } from "./TeethManager.js";
 import { SceneController } from "./SceneController.js";
 var Action;
@@ -49,7 +48,7 @@ export class GUIManager {
     mSelectedAction;
     mValues = {
         [Value.COLOR]: TeethManager.DEFAULT_COLOR,
-        [Value.COMPUTE_COLLISION]: () => AppManager.instance.teethManager.computeCollision(),
+        [Value.COMPUTE_COLLISION]: () => window.app.teethManager.computeCollision(),
         [Value.UPPER_JAW]: {
             [Value.SIZE]: "0",
             [Value.CENTER]: "0",
@@ -74,7 +73,7 @@ export class GUIManager {
         this.mLoadButton.addEventListener("click", () => this.onLoadButtonClick());
         this.mOrbitControlsToggle = document.getElementById("orbit-controls-toggle");
         this.mOrbitControlsToggle.addEventListener("change", () => {
-            AppManager.instance.sceneController.orbitControls.enabled = this.mOrbitControlsToggle.checked;
+            window.app.sceneController.orbitControls.enabled = this.mOrbitControlsToggle.checked;
         });
         // Hide the orbit controls toggle until the assets are loaded
         window.addEventListener(SceneController.ASSETS_LOADED, () => {
@@ -89,8 +88,8 @@ export class GUIManager {
      * @private
      */
     onLoadButtonClick() {
-        AppManager.instance.sceneController.loadAssets().then(() => {
-            AppManager.instance.sceneController.setUpControls();
+        window.app.sceneController.loadAssets().then(() => {
+            window.app.sceneController.setUpControls();
             this.mMainFolder.show();
         });
         this.mLoadButton.remove();
@@ -146,7 +145,7 @@ export class GUIManager {
         const controller = this.mMainFolder
             .addColor(this.mValues, Value.COLOR)
             .onChange((value) => {
-            AppManager.instance.teethManager.markingColor = parseInt(value);
+            window.app.teethManager.markingColor = parseInt(value);
         });
         this.mControllers.set(ControllerType.COLOR, controller);
     }
@@ -237,7 +236,7 @@ export class GUIManager {
      */
     onColorActionSelected() {
         this.mControllers.get(ControllerType.COLOR).show();
-        AppManager.instance.toothPicker.activate();
+        window.app.toothPicker.activate();
     }
     /**
      * Hide the color controller and deactivate the tooth picker
@@ -245,7 +244,7 @@ export class GUIManager {
      */
     onColorActionUnselected() {
         this.mControllers.get(ControllerType.COLOR).hide();
-        AppManager.instance.toothPicker.deactivate();
+        window.app.toothPicker.deactivate();
     }
     /**
      * Show the collision controller and activate the transform controls
@@ -253,7 +252,7 @@ export class GUIManager {
      */
     onTranslateActionSelected() {
         this.mControllers.get(ControllerType.COMPUTE_COLLISION).show();
-        AppManager.instance.teethManager.activateTransformControls();
+        window.app.teethManager.activateTransformControls();
     }
     /**
      * Hide the collision controller and deactivate the transform controls
@@ -261,7 +260,7 @@ export class GUIManager {
      */
     onTranslateActionUnselected() {
         this.mControllers.get(ControllerType.COMPUTE_COLLISION).hide();
-        AppManager.instance.teethManager.deactivateTransformControls();
+        window.app.teethManager.deactivateTransformControls();
     }
     /**
      * Show the bounding boxes controllers and show the bounding boxes
@@ -271,7 +270,7 @@ export class GUIManager {
         this.mFolders.get(FolderType.LOWER_JAW).show();
         this.mFolders.get(FolderType.UPPER_JAW).show();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).show();
-        AppManager.instance.teethManager.showBoundingBoxes();
+        window.app.teethManager.showBoundingBoxes();
     }
     /**
      * Hide the bounding boxes controllers and hide the bounding boxes
@@ -281,7 +280,7 @@ export class GUIManager {
         this.mFolders.get(FolderType.LOWER_JAW).hide();
         this.mFolders.get(FolderType.UPPER_JAW).hide();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).hide();
-        AppManager.instance.teethManager.hideBoundingBoxes();
+        window.app.teethManager.hideBoundingBoxes();
     }
 }
 //# sourceMappingURL=GUIManager.js.map

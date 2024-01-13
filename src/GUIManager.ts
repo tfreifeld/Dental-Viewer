@@ -1,5 +1,4 @@
 import GUI, {Controller} from "lil-gui";
-import {AppManager} from "./AppManager.js";
 import {type BoundingBoxUpdateData, TeethManager} from "./TeethManager.js";
 import {SceneController} from "./SceneController.js";
 import type {Vector3} from "three";
@@ -58,7 +57,7 @@ export class GUIManager {
 
     private mValues = {
         [Value.COLOR]: TeethManager.DEFAULT_COLOR,
-        [Value.COMPUTE_COLLISION]: () => AppManager.instance.teethManager.computeCollision(),
+        [Value.COMPUTE_COLLISION]: () => window.app.teethManager.computeCollision(),
         [Value.UPPER_JAW]: {
             [Value.SIZE]: "0",
             [Value.CENTER]: "0",
@@ -89,7 +88,7 @@ export class GUIManager {
 
         this.mOrbitControlsToggle = document.getElementById("orbit-controls-toggle") as HTMLInputElement;
         this.mOrbitControlsToggle.addEventListener("change", () => {
-            AppManager.instance.sceneController.orbitControls.enabled = this.mOrbitControlsToggle.checked;
+            window.app.sceneController.orbitControls.enabled = this.mOrbitControlsToggle.checked;
         });
 
         // Hide the orbit controls toggle until the assets are loaded
@@ -111,8 +110,8 @@ export class GUIManager {
      * @private
      */
     private onLoadButtonClick(): void {
-        AppManager.instance.sceneController.loadAssets().then(() => {
-            AppManager.instance.sceneController.setUpControls();
+        window.app.sceneController.loadAssets().then(() => {
+            window.app.sceneController.setUpControls();
             this.mMainFolder.show();
         });
         this.mLoadButton.remove();
@@ -181,7 +180,7 @@ export class GUIManager {
             this.mMainFolder
                 .addColor(this.mValues, Value.COLOR)
                 .onChange((value: string) => {
-                    AppManager.instance.teethManager.markingColor = parseInt(value);
+                    window.app.teethManager.markingColor = parseInt(value);
                 });
 
         this.mControllers.set(ControllerType.COLOR, controller);
@@ -299,7 +298,7 @@ export class GUIManager {
      */
     private onColorActionSelected(): void {
         this.mControllers.get(ControllerType.COLOR).show();
-        AppManager.instance.toothPicker.activate();
+        window.app.toothPicker.activate();
     }
 
     /**
@@ -308,7 +307,7 @@ export class GUIManager {
      */
     private onColorActionUnselected(): void {
         this.mControllers.get(ControllerType.COLOR).hide();
-        AppManager.instance.toothPicker.deactivate();
+        window.app.toothPicker.deactivate();
     }
 
     /**
@@ -317,7 +316,7 @@ export class GUIManager {
      */
     private onTranslateActionSelected(): void {
         this.mControllers.get(ControllerType.COMPUTE_COLLISION).show();
-        AppManager.instance.teethManager.activateTransformControls();
+        window.app.teethManager.activateTransformControls();
     }
 
     /**
@@ -326,7 +325,7 @@ export class GUIManager {
      */
     private onTranslateActionUnselected(): void {
         this.mControllers.get(ControllerType.COMPUTE_COLLISION).hide();
-        AppManager.instance.teethManager.deactivateTransformControls();
+        window.app.teethManager.deactivateTransformControls();
     }
 
     /**
@@ -337,7 +336,7 @@ export class GUIManager {
         this.mFolders.get(FolderType.LOWER_JAW).show();
         this.mFolders.get(FolderType.UPPER_JAW).show();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).show();
-        AppManager.instance.teethManager.showBoundingBoxes();
+        window.app.teethManager.showBoundingBoxes();
     }
 
     /**
@@ -348,6 +347,6 @@ export class GUIManager {
         this.mFolders.get(FolderType.LOWER_JAW).hide();
         this.mFolders.get(FolderType.UPPER_JAW).hide();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).hide();
-        AppManager.instance.teethManager.hideBoundingBoxes();
+        window.app.teethManager.hideBoundingBoxes();
     }
 }

@@ -12,7 +12,6 @@ import {
     Vector3
 } from "three";
 import {acceleratedRaycast} from "three-mesh-bvh";
-import {AppManager} from "./AppManager.js";
 
 export class CollisionManager {
 
@@ -50,7 +49,7 @@ export class CollisionManager {
         this.mPointMaterial ??= new PointsMaterial({color: "yellow", size: 0.1, depthTest: false});
         this.mPointGeometry ??= new BufferGeometry();
         this.mPointObject ??= new Points(this.mPointGeometry, this.mPointMaterial);
-        AppManager.instance.sceneController.scene.add(this.mPointObject);
+        window.app.sceneController.scene.add(this.mPointObject);
 
         this.nullifyPointsData();
 

@@ -10,7 +10,7 @@
     "sourceMap": true,
     "noImplicitOverride": true,
     "rootDir": "src",
-    "outDir": "build",
-    "esModuleInterop": true,
+    "outDir": "js",
+    "esModuleInterop": true
   }
 }

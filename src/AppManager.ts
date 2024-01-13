@@ -1,11 +1,15 @@
 import {SceneController} from "./SceneController.js";
-import {ToothPicker} from "./ToothPicker.js";
 import {TeethManager} from "./TeethManager.js";
 import {GUIManager} from "./GUIManager.js";
+import {ToothPicker} from "./ToothPicker.js";
+
+declare global {
+    interface Window {
+        app: AppManager;
+    }
+}
 
 export class AppManager {
-
-    public static instance: AppManager;
 
     private readonly mSceneController: SceneController;
     private readonly mToothPicker: ToothPicker;
@@ -13,7 +17,7 @@ export class AppManager {
 
     constructor() {
 
-        AppManager.instance = this;
+        window["app"] = this;
 
         new GUIManager();
         this.mSceneController = new SceneController();

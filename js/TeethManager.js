@@ -1,6 +1,5 @@
 import { Box3, Box3Helper, Vector3 } from "three";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
-import { AppManager } from "./AppManager.js";
 import { SceneController } from "./SceneController.js";
 import { CollisionManager } from "./CollisionManager.js";
 import { MeshBVH } from "three-mesh-bvh";
@@ -62,21 +61,21 @@ export class TeethManager {
         this.mUpperBoundingBoxHelper.visible = false;
         this.mLowerBoundingBoxHelper = new Box3Helper(this.mLowerBoundingBox, 0xff0000);
         this.mLowerBoundingBoxHelper.visible = false;
-        AppManager.instance.sceneController.scene.add(this.mUpperBoundingBoxHelper);
-        AppManager.instance.sceneController.scene.add(this.mLowerBoundingBoxHelper);
+        window.app.sceneController.scene.add(this.mUpperBoundingBoxHelper);
+        window.app.sceneController.scene.add(this.mLowerBoundingBoxHelper);
     }
     /**
      * Set up the transform controls
      * @private
      */
     setUpTransformControls() {
-        this.mTransformControls = new TransformControls(AppManager.instance.sceneController.camera, AppManager.instance.sceneController.renderer.domElement);
+        this.mTransformControls = new TransformControls(window.app.sceneController.camera, window.app.sceneController.renderer.domElement);
         // Only allow translation along the y-axis per instructions
         this.mTransformControls.showZ = false;
         this.mTransformControls.showX = false;
         // Disable orbit controls when dragging
         this.mTransformControls.addEventListener("dragging-changed", (event) => {
-            AppManager.instance.sceneController.orbitControls.enabled = !event.value;
+            window.app.sceneController.orbitControls.enabled = !event.value;
             this.mCollisionManager.nullifyPointsData();
         });
     }
@@ -91,14 +90,14 @@ export class TeethManager {
      */
     activateTransformControls() {
         this.mTransformControls.attach(this.mUpperJaw);
-        AppManager.instance.sceneController.scene.add(this.mTransformControls);
+        window.app.sceneController.scene.add(this.mTransformControls);
     }
     /**
      * Deactivate the transform controls
      */
     deactivateTransformControls() {
         this.mTransformControls.detach();
-        AppManager.instance.sceneController.scene.remove(this.mTransformControls);
+        window.app.sceneController.scene.remove(this.mTransformControls);
     }
     /**
      * Add or remove the tooth from the set of marked teeth

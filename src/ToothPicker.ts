@@ -1,5 +1,4 @@
 import {BufferGeometry, type Intersection, Mesh, MeshStandardMaterial, Raycaster, Vector2} from "three";
-import {AppManager} from "./AppManager.js";
 import {SceneController} from "./SceneController.js";
 
 export class ToothPicker {
@@ -53,7 +52,7 @@ export class ToothPicker {
             return;
         }
         if (this.mPickedTooth != null) {
-            AppManager.instance.teethManager.onToothSelected(this.mPickedTooth);
+            window["app"].teethManager.onToothSelected(this.mPickedTooth);
         }
     }
 
@@ -67,9 +66,9 @@ export class ToothPicker {
         }
 
         // Update the picking ray with the camera and pointer position
-        this.mRaycaster.setFromCamera(this.mPointerCoords, AppManager.instance.sceneController.camera);
+        this.mRaycaster.setFromCamera(this.mPointerCoords, window.app.sceneController.camera);
 
-        const intersection: Intersection = this.mRaycaster.intersectObject(AppManager.instance.teethManager.models, true)?.[0];
+        const intersection: Intersection = this.mRaycaster.intersectObject(window.app.teethManager.models, true)?.[0];
 
         if (intersection != null) {
 
@@ -80,18 +79,18 @@ export class ToothPicker {
 
             // If the user was already hovering a different tooth, change its color back to white if needed
             if (this.mPickedTooth != null) {
-                AppManager.instance.teethManager.onToothNotHovered(this.mPickedTooth);
+                window.app.teethManager.onToothNotHovered(this.mPickedTooth);
             }
 
             this.mPickedTooth = intersection.object as Mesh<BufferGeometry, MeshStandardMaterial>;
 
             // Mark the picked tooth as hovered
-            AppManager.instance.teethManager.onToothHovered(this.mPickedTooth);
+            window.app.teethManager.onToothHovered(this.mPickedTooth);
         } else {
 
             // If the user is not hovering over any tooth, change the color of the previously picked tooth back to white if needed
             if (this.mPickedTooth != null) {
-                AppManager.instance.teethManager.onToothNotHovered(this.mPickedTooth);
+                window.app.teethManager.onToothNotHovered(this.mPickedTooth);
             }
 
             this.mPickedTooth = null;

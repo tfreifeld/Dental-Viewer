@@ -1,6 +1,5 @@
 import { Box3, BufferGeometry, Mesh, Points, PointsMaterial, Raycaster, Sphere, Vector3 } from "three";
 import { acceleratedRaycast } from "three-mesh-bvh";
-import { AppManager } from "./AppManager.js";
 export class CollisionManager {
     // Auxiliary variables for reserving memory
     static sVec1 = new Vector3();
@@ -29,7 +28,7 @@ export class CollisionManager {
         this.mPointMaterial ??= new PointsMaterial({ color: "yellow", size: 0.1, depthTest: false });
         this.mPointGeometry ??= new BufferGeometry();
         this.mPointObject ??= new Points(this.mPointGeometry, this.mPointMaterial);
-        AppManager.instance.sceneController.scene.add(this.mPointObject);
+        window.app.sceneController.scene.add(this.mPointObject);
         this.nullifyPointsData();
         // Check for collisions for each upper tooth with each lower tooth
         this.mTeethManager.upperJaw.children.forEach((upperTooth) => {
