@@ -157,6 +157,7 @@ export class GUIManager {
     setUpCollisionController() {
         const controller = this.mMainFolder.add(this.mValues, Value.COMPUTE_COLLISION);
         this.mControllers.set(ControllerType.COMPUTE_COLLISION, controller);
+        controller.hide();
     }
     /**
      * Set up the bounding boxes controllers
@@ -230,26 +231,52 @@ export class GUIManager {
         this.mControllers.get(ControllerType.LOWER_JAW_MAX).updateDisplay();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).updateDisplay();
     }
+    /**
+     * Show the color controller and activate the tooth picker
+     * @private
+     */
     onColorActionSelected() {
         this.mControllers.get(ControllerType.COLOR).show();
         AppManager.instance.toothPicker.activate();
     }
+    /**
+     * Hide the color controller and deactivate the tooth picker
+     * @private
+     */
     onColorActionUnselected() {
         this.mControllers.get(ControllerType.COLOR).hide();
         AppManager.instance.toothPicker.deactivate();
     }
+    /**
+     * Show the collision controller and activate the transform controls
+     * @private
+     */
     onTranslateActionSelected() {
+        this.mControllers.get(ControllerType.COMPUTE_COLLISION).show();
         AppManager.instance.teethManager.activateTransformControls();
     }
+    /**
+     * Hide the collision controller and deactivate the transform controls
+     * @private
+     */
     onTranslateActionUnselected() {
+        this.mControllers.get(ControllerType.COMPUTE_COLLISION).hide();
         AppManager.instance.teethManager.deactivateTransformControls();
     }
+    /**
+     * Show the bounding boxes controllers and show the bounding boxes
+     * @private
+     */
     onBoundingBoxActionSelected() {
         this.mFolders.get(FolderType.LOWER_JAW).show();
         this.mFolders.get(FolderType.UPPER_JAW).show();
         this.mControllers.get(ControllerType.IS_BOXES_COLLIDING).show();
         AppManager.instance.teethManager.showBoundingBoxes();
     }
+    /**
+     * Hide the bounding boxes controllers and hide the bounding boxes
+     * @private
+     */
     onBoundingBoxActionUnselected() {
         this.mFolders.get(FolderType.LOWER_JAW).hide();
         this.mFolders.get(FolderType.UPPER_JAW).hide();

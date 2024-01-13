@@ -1,17 +1,9 @@
-import {
-    Box3,
-    Box3Helper,
-    type BufferGeometry,
-    type Group,
-    type Mesh,
-    MeshBasicMaterial,
-    type MeshStandardMaterial,
-    Vector3
-} from "three";
+import {Box3, Box3Helper, type BufferGeometry, type Group, type Mesh, type MeshStandardMaterial, Vector3} from "three";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {AppManager} from "./AppManager.js";
 import {SceneController} from "./SceneController.js";
 import {CollisionManager} from "./CollisionManager.js";
+import {MeshBVH} from "three-mesh-bvh";
 
 export type BoundingBoxUpdateData = {
     upper: {
@@ -80,16 +72,17 @@ export class TeethManager {
             this.mUpperJaw = event.detail.upperJaw;
             this.mLowerJaw = event.detail.lowerJaw;
 
-            // TODO: remove?
-            const yellowMaterial: MeshBasicMaterial = new MeshBasicMaterial({color: 0xffff00});
+            // Compute bounding volume hierarchies for the teeth for faster collision detection
+            this.mUpperJaw.children.forEach((upperTooth: Mesh<BufferGeometry, MeshStandardMaterial>) => {
+                // Create bounding volume hierarchy for the upper tooth
+                upperTooth.geometry.boundsTree = new MeshBVH(upperTooth.geometry);
+            });
 
-            [...this.mUpperJaw.children, ...this.mLowerJaw.children].forEach(
-                (tooth: Mesh) => {
-                    const numberOfVertices = tooth.geometry.getAttribute("position").count;
-                    tooth.material = [tooth.material as MeshStandardMaterial, yellowMaterial];
-                    tooth.geometry.addGroup(0, numberOfVertices, 0);
-                }
-            )
+            this.mLowerJaw.children.forEach((lowerTooth: Mesh<BufferGeometry, MeshStandardMaterial>) => {
+                // Create bounding volume hierarchy for the lower tooth
+                lowerTooth.geometry.boundsTree = new MeshBVH(lowerTooth.geometry);
+            });
+
         });
     }
 
@@ -127,15 +120,9 @@ export class TeethManager {
         // Disable orbit controls when dragging
         this.mTransformControls.addEventListener("dragging-changed", (event) => {
             AppManager.instance.sceneController.orbitControls.enabled = !event.value;
+            this.mCollisionManager.nullifyPointsData();
         });
 
-        this.mTransformControls.addEventListener("mouseDown", () => {
-            AppManager.instance.toothPicker.deactivate();
-        });
-
-        this.mTransformControls.addEventListener("mouseUp", () => {
-            AppManager.instance.toothPicker.activate();
-        });
     }
 
     /**
@@ -175,7 +162,7 @@ export class TeethManager {
             // If the tooth is marked with the same color as the current marking color, unmark it
             if (this.mMarkedTeeth.get(tooth) === this.mMarkingColor) {
                 this.mMarkedTeeth.delete(tooth);
-                tooth.material[0].color.set(0xffffff);
+                tooth.material.color.set(0xffffff);
                 return;
             }
         }
@@ -184,7 +171,7 @@ export class TeethManager {
          change its color to the current marking color,
         */
         this.mMarkedTeeth.set(tooth, this.mMarkingColor);
-        tooth.material[0].color.set(this.mMarkingColor);
+        tooth.material.color.set(this.mMarkingColor);
 
     }
 
@@ -194,7 +181,7 @@ export class TeethManager {
      */
     onToothNotHovered(tooth: Mesh<BufferGeometry, MeshStandardMaterial>): void {
         if (tooth.userData.originalColor != null) {
-            tooth.material[0].color.set(tooth.userData.originalColor);
+            tooth.material.color.set(tooth.userData.originalColor);
             tooth.userData.originalColor = null;
         }
     }
@@ -205,8 +192,8 @@ export class TeethManager {
      * @param tooth The tooth that the user is hovering over
      */
     onToothHovered(tooth: Mesh<BufferGeometry, MeshStandardMaterial>): void {
-        tooth.userData.originalColor = tooth.material[0].color.getHex();
-        tooth.material[0].color.set(this.mMarkingColor);
+        tooth.userData.originalColor = tooth.material.color.getHex();
+        tooth.material.color.set(this.mMarkingColor);
     }
 
     /**

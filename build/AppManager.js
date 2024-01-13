@@ -7,10 +7,9 @@ export class AppManager {
     mSceneController;
     mToothPicker;
     mTeethManager;
-    mGUIManager;
     constructor() {
         AppManager.instance = this;
-        this.mGUIManager = new GUIManager();
+        new GUIManager();
         this.mSceneController = new SceneController();
         this.mToothPicker = new ToothPicker();
         this.mTeethManager = new TeethManager();

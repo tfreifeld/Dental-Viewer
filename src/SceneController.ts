@@ -5,7 +5,6 @@ import {
     type MeshStandardMaterial,
     PerspectiveCamera,
     Scene,
-    Vector3,
     WebGLRenderer
 } from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
@@ -50,7 +49,7 @@ export class SceneController {
         this.mRenderer.setPixelRatio(window.devicePixelRatio);
         this.mRenderer.setSize(window.innerWidth, window.innerHeight);
         // Set background color to a nice grey instead of black
-        this.mRenderer.setClearColor(0x888888);
+        this.mRenderer.setClearColor(0x666666);
         document.body.appendChild(this.mRenderer.domElement);
     }
 
@@ -110,8 +109,8 @@ export class SceneController {
      */
     async loadAssets(): Promise<void> {
 
-        const onProgressCallback = (progress: ProgressEvent) => {
-            console.log((progress.loaded / progress.total * 100) + '% loaded')
+        const onProgressCallback = (/*progress: ProgressEvent*/) => {
+            // console.log((progress.loaded / progress.total * 100) + '% loaded')
         }
 
         const loader: GLTFLoader = new GLTFLoader();
@@ -149,7 +148,6 @@ export class SceneController {
      * Set up the orbit controls
      */
     setUpControls(): void {
-
         this.mOrbitControls = new OrbitControls(this.mCamera, this.mRenderer.domElement)
     }
 
@@ -161,6 +159,7 @@ export class SceneController {
     private cloneMaterials(jawGroup: Group): void {
         jawGroup.children.forEach((tooth: Mesh) => {
             tooth.material = (tooth.material as MeshStandardMaterial).clone();
+            tooth.material.side = 2;
         });
     }
 

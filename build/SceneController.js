@@ -1,4 +1,4 @@
-import { DirectionalLight, Group, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from "three";
+import { DirectionalLight, Group, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export class SceneController {
@@ -31,7 +31,7 @@ export class SceneController {
         this.mRenderer.setPixelRatio(window.devicePixelRatio);
         this.mRenderer.setSize(window.innerWidth, window.innerHeight);
         // Set background color to a nice grey instead of black
-        this.mRenderer.setClearColor(0x888888);
+        this.mRenderer.setClearColor(0x666666);
         document.body.appendChild(this.mRenderer.domElement);
     }
     /**
@@ -83,8 +83,8 @@ export class SceneController {
      * @private
      */
     async loadAssets() {
-        const onProgressCallback = (progress) => {
-            console.log((progress.loaded / progress.total * 100) + '% loaded');
+        const onProgressCallback = ( /*progress: ProgressEvent*/) => {
+            // console.log((progress.loaded / progress.total * 100) + '% loaded')
         };
         const loader = new GLTFLoader();
         const lowerJaw = (await loader.loadAsync('assets/LowerJaw/lower-jaw-vertical.glb', onProgressCallback)).scene;
@@ -122,6 +122,7 @@ export class SceneController {
     cloneMaterials(jawGroup) {
         jawGroup.children.forEach((tooth) => {
             tooth.material = tooth.material.clone();
+            tooth.material.side = 2;
         });
     }
     get camera() {

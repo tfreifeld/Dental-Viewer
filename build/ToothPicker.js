@@ -1,4 +1,4 @@
-import { BufferGeometry, Mesh, MeshStandardMaterial, Raycaster, Vector2, Vector3 } from "three";
+import { BufferGeometry, Mesh, MeshStandardMaterial, Raycaster, Vector2 } from "three";
 import { AppManager } from "./AppManager.js";
 import { SceneController } from "./SceneController.js";
 export class ToothPicker {
@@ -6,7 +6,6 @@ export class ToothPicker {
     mRaycaster;
     mPointerCoords;
     mPickedTooth;
-    mIntersection;
     constructor() {
         this.mIsActive = true;
         this.mPickedTooth = null;
@@ -53,7 +52,6 @@ export class ToothPicker {
         this.mRaycaster.setFromCamera(this.mPointerCoords, AppManager.instance.sceneController.camera);
         const intersection = this.mRaycaster.intersectObject(AppManager.instance.teethManager.models, true)?.[0];
         if (intersection != null) {
-            this.mIntersection = intersection;
             // If the user is already hovering over the picked tooth, do nothing
             if (this.mPickedTooth === intersection.object) {
                 return;
@@ -74,9 +72,15 @@ export class ToothPicker {
             this.mPickedTooth = null;
         }
     }
+    /**
+     * Activate the tooth picker
+     */
     activate() {
         this.mIsActive = true;
     }
+    /**
+     * Deactivate the tooth picker
+     */
     deactivate() {
         this.mIsActive = false;
     }

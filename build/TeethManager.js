@@ -1,8 +1,9 @@
-import { Box3, Box3Helper, MeshBasicMaterial, Vector3 } from "three";
+import { Box3, Box3Helper, Vector3 } from "three";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls";
 import { AppManager } from "./AppManager.js";
 import { SceneController } from "./SceneController.js";
 import { CollisionManager } from "./CollisionManager.js";
+import { MeshBVH } from "three-mesh-bvh";
 export class TeethManager {
     // Auxiliary vectors for reserving memory
     static sV1 = new Vector3();
@@ -39,12 +40,14 @@ export class TeethManager {
             this.mModelGroup = event.detail.group;
             this.mUpperJaw = event.detail.upperJaw;
             this.mLowerJaw = event.detail.lowerJaw;
-            // TODO: remove?
-            const yellowMaterial = new MeshBasicMaterial({ color: 0xffff00 });
-            [...this.mUpperJaw.children, ...this.mLowerJaw.children].forEach((tooth) => {
-                const numberOfVertices = tooth.geometry.getAttribute("position").count;
-                tooth.material = [tooth.material, yellowMaterial];
-                tooth.geometry.addGroup(0, numberOfVertices, 0);
+            // Compute bounding volume hierarchies for the teeth for faster collision detection
+            this.mUpperJaw.children.forEach((upperTooth) => {
+                // Create bounding volume hierarchy for the upper tooth
+                upperTooth.geometry.boundsTree = new MeshBVH(upperTooth.geometry);
+            });
+            this.mLowerJaw.children.forEach((lowerTooth) => {
+                // Create bounding volume hierarchy for the lower tooth
+                lowerTooth.geometry.boundsTree = new MeshBVH(lowerTooth.geometry);
             });
         });
     }
@@ -74,12 +77,7 @@ export class TeethManager {
         // Disable orbit controls when dragging
         this.mTransformControls.addEventListener("dragging-changed", (event) => {
             AppManager.instance.sceneController.orbitControls.enabled = !event.value;
-        });
-        this.mTransformControls.addEventListener("mouseDown", () => {
-            AppManager.instance.toothPicker.deactivate();
-        });
-        this.mTransformControls.addEventListener("mouseUp", () => {
-            AppManager.instance.toothPicker.activate();
+            this.mCollisionManager.nullifyPointsData();
         });
     }
     /**
@@ -114,7 +112,7 @@ export class TeethManager {
             // If the tooth is marked with the same color as the current marking color, unmark it
             if (this.mMarkedTeeth.get(tooth) === this.mMarkingColor) {
                 this.mMarkedTeeth.delete(tooth);
-                tooth.material[0].color.set(0xffffff);
+                tooth.material.color.set(0xffffff);
                 return;
             }
         }
@@ -123,7 +121,7 @@ export class TeethManager {
          change its color to the current marking color,
         */
         this.mMarkedTeeth.set(tooth, this.mMarkingColor);
-        tooth.material[0].color.set(this.mMarkingColor);
+        tooth.material.color.set(this.mMarkingColor);
     }
     /**
      * Change the color of the tooth back to its previous color
@@ -131,7 +129,7 @@ export class TeethManager {
      */
     onToothNotHovered(tooth) {
         if (tooth.userData.originalColor != null) {
-            tooth.material[0].color.set(tooth.userData.originalColor);
+            tooth.material.color.set(tooth.userData.originalColor);
             tooth.userData.originalColor = null;
         }
     }
@@ -141,8 +139,8 @@ export class TeethManager {
      * @param tooth The tooth that the user is hovering over
      */
     onToothHovered(tooth) {
-        tooth.userData.originalColor = tooth.material[0].color.getHex();
-        tooth.material[0].color.set(this.mMarkingColor);
+        tooth.userData.originalColor = tooth.material.color.getHex();
+        tooth.material.color.set(this.mMarkingColor);
     }
     /**
      * Show the bounding boxes of the jaws

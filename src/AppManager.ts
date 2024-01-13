@@ -10,13 +10,12 @@ export class AppManager {
     private readonly mSceneController: SceneController;
     private readonly mToothPicker: ToothPicker;
     private readonly mTeethManager: TeethManager;
-    private readonly mGUIManager: GUIManager;
 
     constructor() {
 
         AppManager.instance = this;
 
-        this.mGUIManager = new GUIManager();
+        new GUIManager();
         this.mSceneController = new SceneController();
         this.mToothPicker = new ToothPicker();
         this.mTeethManager = new TeethManager();
