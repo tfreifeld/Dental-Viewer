@@ -53650,7 +53650,6 @@ class GUIManager {
      */
     onActionSelected(newAction) {
         this.mActions.get(newAction)?.onSelect();
-        // TODO: perhaps only call unselect on the previously selected action?
         Object.values(Action)
             .filter((action) => action !== newAction)
             .forEach((action) => this.mActions.get(action)?.onUnselect());
